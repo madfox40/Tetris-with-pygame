@@ -279,7 +279,7 @@ def getDirection():
 
 
 def paintVoidBoard():
-    num_vert_lines = height_cells - 1
+    num_vert_lines = width_cells
     num_hor_lines = (height_cells - 3) - 1
 
     for i in range(num_hor_lines):
@@ -288,28 +288,62 @@ def paintVoidBoard():
 
     for i in range(num_vert_lines):
         x = (i+1) * cell_width
-        pygame.draw.line(window, (255, 255, 255), (board_pos[0]+x,  board_pos[1]+0), (board_pos[0]+x,  board_pos[1]+screen_height))
+        pygame.draw.line(window, (255, 255, 255), (board_pos[0]+x,  board_pos[1]+0), (board_pos[0]+x,  board_pos[1]+board_height))
 
 
 def paintFigures():
     global shadowPos
 
     updateShadowPos()
+    """
     for shadowObj in shadowPos:
         x = shadowObj[0][0]
         y = shadowObj[0][1]
         pygame.draw.rect(window, (255, 255, 255),pygame.Rect(board_pos[0] + (cell_width * (x)), board_pos[1] +( cell_height * (y - 3)), cell_width, cell_height))
+    """
+    for shadowObj in shadowPos:
+        x = shadowObj[0][0]
+        y = shadowObj[0][1]
+        shadow_rect = pygame.Rect(board_pos[0] + (cell_width * (x)), board_pos[1] +( cell_height * (y - 3)), cell_width, cell_height)
+        window.blit(shadow_image, shadow_rect)
     shadowPos = []
-
+    """
     for y in range(len(board)):
         for x in range(len(board[y])):
             if len(board[y][x]) > 1:
                 pygame.draw.rect(window, board[y][x][4], pygame.Rect(board_pos[0] +(cell_width * (x)),board_pos[1] + (cell_height * (y-3)), cell_width, cell_height))
+    """
+
+    for y in range(len(board)):
+        for x in range(len(board[y])):
+            if len(board[y][x]) > 1:
+                figure_rect = pygame.Rect(board_pos[0] +(cell_width * (x)),board_pos[1] + (cell_height * (y-3)), cell_width, cell_height)
+                if board[y][x][1] == 1:
+                    window.blit(figure1_image, figure_rect)
+                elif board[y][x][1] == 2:
+                    window.blit(figure2_image, figure_rect)
+                elif board[y][x][1] == 3:
+                    window.blit(figure3_image, figure_rect)
+                elif board[y][x][1] == 4:
+                    window.blit(figure4_image, figure_rect)
+                elif board[y][x][1] == 5:
+                    window.blit(figure5_image, figure_rect)
+                elif board[y][x][1] == 6:
+                    window.blit(figure6_image, figure_rect)
+                elif board[y][x][1] == 7:
+                    window.blit(figure7_image, figure_rect)
+
+
 
 def increaseDiff():
     global cooldown
-    if cooldown > 2:
-        cooldown = cooldown - 1
+    global increase_diff_value
+    if increase_diff_value <= 0:
+        increase_diff_value = increase_diff_counter
+        if cooldown > 2:
+            cooldown = cooldown - 1
+    else:
+        increase_diff_value = increase_diff_value-1
 
 def getPosibleDownMovements(object):
     # object = [(x,y), [true, pieceType, rotateState, rotateMovements]
@@ -358,10 +392,26 @@ def checkLoose():
 
 def paintGameOver():
     game_over_rect = game_over_image.get_rect()
-    game_over_rect.center = window.get_rect().center
+    game_over_rect.center = board_center
     window.blit(game_over_image, game_over_rect)
 
+def paintControlBoard():
+    control_bar_rect = control_bar_image.get_rect()
+    control_bar_rect.center = (board_width*1.5, board_height/2)
+    window.blit(control_bar_image, control_bar_rect)
+
+def paintBackgrounds():
+    tetris_background_rect = tetris_background_image.get_rect()
+    tetris_background_rect.center = (board_width/2, board_height/2)
+    window.blit(tetris_background_image, tetris_background_rect)
+
+    stats_background_rect = stats_background_image.get_rect()
+    stats_background_rect.center = (board_width*1.5, board_height/2)
+    window.blit(stats_background_image, stats_background_rect)
+
 if __name__ == "__main__":
+    screen_width = 600
+    screen_height = 600
 
     height_cells = 23
     width_cells = 10
@@ -372,28 +422,55 @@ if __name__ == "__main__":
     lastInput = "None"
     moving_positions = []
     pygame.init()
-    screen_width = 300
-    screen_height = 600
-    board_width = 300
-    board_height = 600
-    board_pos = (0,100)
+    board_height = screen_height
+    board_width = screen_width/2
+    board_center = (board_width/2,board_height/2)
+    board_pos = (0,0)
     cooldown = 15
     dir_cooldown= 3
     actual_cooldown = cooldown
     dir_actual_cooldown = dir_cooldown
+    increase_diff_value = 4
+    increase_diff_counter = increase_diff_value
     shadowPos = []
 
     game_over = False
     game_over_image = pygame.image.load("./images/gameOver.png")
-    game_over_image = pygame.transform.scale(game_over_image, (screen_width, screen_height))
+    game_over_image = pygame.transform.scale(game_over_image, (board_width, board_height))
 
-    cell_width = screen_width / width_cells
-    cell_height = screen_height / (height_cells-3)
+    control_bar = pygame.image.load("./images/TetrisStats.png")
+    control_bar_image = pygame.transform.scale(control_bar, (board_width, board_height))
 
-    window = pygame.display.set_mode((board_width, board_height))
+    tetris_background = pygame.image.load("./images/tetrisBackground.png")
+    tetris_background_image = pygame.transform.scale(tetris_background, (board_width, board_height))
+
+    stats_background = pygame.image.load("./images/statsBackground.png")
+    stats_background_image = pygame.transform.scale(stats_background, (board_width, board_height))
+
+    cell_width = board_width / width_cells
+    cell_height = board_height / (height_cells-3)
+
+    figure1 = pygame.image.load("./images/cuadraditos/1.png")
+    figure2 = pygame.image.load("./images/cuadraditos/2.png")
+    figure3 = pygame.image.load("./images/cuadraditos/3.png")
+    figure4 = pygame.image.load("./images/cuadraditos/4.png")
+    figure5 = pygame.image.load("./images/cuadraditos/5.png")
+    figure6 = pygame.image.load("./images/cuadraditos/6.png")
+    figure7 = pygame.image.load("./images/cuadraditos/7.png")
+    shadow = pygame.image.load("./images/cuadraditos/shadow.png")
+    figure1_image = pygame.transform.scale(figure1, (cell_width,cell_height))
+    figure2_image = pygame.transform.scale(figure2, (cell_width,cell_height))
+    figure3_image = pygame.transform.scale(figure3, (cell_width,cell_height))
+    figure4_image = pygame.transform.scale(figure4, (cell_width,cell_height))
+    figure5_image = pygame.transform.scale(figure5, (cell_width,cell_height))
+    figure6_image = pygame.transform.scale(figure6, (cell_width,cell_height))
+    figure7_image = pygame.transform.scale(figure7, (cell_width, cell_height))
+    shadow_image = pygame.transform.scale(shadow, (cell_width,cell_height))
+
+
+    window = pygame.display.set_mode((screen_width, screen_height))
     screen_rect = window.get_rect()
     createBoard()
-
 
 
     while True:
@@ -521,6 +598,7 @@ if __name__ == "__main__":
 
 
         window.fill((0, 0, 0))
+        paintBackgrounds()
         paintFigures()
         paintVoidBoard()
         if game_over:
@@ -528,6 +606,7 @@ if __name__ == "__main__":
             if rotate:
                 game_over = False
                 createBoard()
+        paintControlBoard()
         pygame.display.flip()
         fps.tick(60)
 
