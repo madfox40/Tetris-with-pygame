@@ -284,27 +284,27 @@ def paintVoidBoard():
 
     for i in range(num_hor_lines):
         y = (i+1) * cell_height
-        pygame.draw.line(window, (255, 255, 255), (0, y), (screen_width, y))
+        pygame.draw.line(window, (255, 255, 255), (board_pos[0]+0, board_pos[1]+y), (board_pos[0]+board_width,  board_pos[1]+y))
 
     for i in range(num_vert_lines):
         x = (i+1) * cell_width
-        pygame.draw.line(window, (255, 255, 255), (x, 0), (x, screen_height))
+        pygame.draw.line(window, (255, 255, 255), (board_pos[0]+x,  board_pos[1]+0), (board_pos[0]+x,  board_pos[1]+screen_height))
 
 
 def paintFigures():
     global shadowPos
-    for y in range(len(board)):
-        for x in range(len(board[y])):
-            if len(board[y][x]) > 1:
-                pygame.draw.rect(window, board[y][x][4], pygame.Rect(cell_width * (x), cell_height * (y-3), cell_width, cell_height))
 
     updateShadowPos()
     for shadowObj in shadowPos:
         x = shadowObj[0][0]
         y = shadowObj[0][1]
-        pygame.draw.rect(window, (255, 255, 255),pygame.Rect(cell_width * (x), cell_height * (y - 3), cell_width, cell_height))
+        pygame.draw.rect(window, (255, 255, 255),pygame.Rect(board_pos[0] + (cell_width * (x)), board_pos[1] +( cell_height * (y - 3)), cell_width, cell_height))
     shadowPos = []
-    #removeShadows()
+
+    for y in range(len(board)):
+        for x in range(len(board[y])):
+            if len(board[y][x]) > 1:
+                pygame.draw.rect(window, board[y][x][4], pygame.Rect(board_pos[0] +(cell_width * (x)),board_pos[1] + (cell_height * (y-3)), cell_width, cell_height))
 
 def increaseDiff():
     global cooldown
@@ -347,10 +347,22 @@ def updateShadowPos():
             y = object[0][1]
             shadowPos.append([(x,y+max_y), object_body])
 
+def checkLoose():
+    for y in range(len(board)):
+        for x in range(len(board[y])):
+            if y > 2:
+                break
+            if len(board[y][x]) > 1 and board[y][x][0] == False:
+                return True
+    return False
 
-
+def paintGameOver():
+    game_over_rect = game_over_image.get_rect()
+    game_over_rect.center = window.get_rect().center
+    window.blit(game_over_image, game_over_rect)
 
 if __name__ == "__main__":
+
     height_cells = 23
     width_cells = 10
     board = None
@@ -362,115 +374,125 @@ if __name__ == "__main__":
     pygame.init()
     screen_width = 300
     screen_height = 600
+    board_width = 300
+    board_height = 600
+    board_pos = (0,100)
     cooldown = 15
     dir_cooldown= 3
     actual_cooldown = cooldown
     dir_actual_cooldown = dir_cooldown
     shadowPos = []
 
+    game_over = False
+    game_over_image = pygame.image.load("./images/gameOver.png")
+    game_over_image = pygame.transform.scale(game_over_image, (screen_width, screen_height))
+
     cell_width = screen_width / width_cells
     cell_height = screen_height / (height_cells-3)
 
-    window = pygame.display.set_mode((screen_width, screen_height))
+    window = pygame.display.set_mode((board_width, board_height))
     screen_rect = window.get_rect()
     createBoard()
 
 
 
     while True:
-        dir_actual_cooldown = dir_actual_cooldown - 1
-        if direction == "down":
-            actual_cooldown = -1
-        if dir_actual_cooldown < 0:
-            dir_actual_cooldown = dir_cooldown
-            if state == "generate":
-                number = random.randint(1,7)
-                #number = 1
-                #number = 4
-                if number == 1:
-                    generatePiece1()
-                elif number == 2:
-                    generatePiece2()
-                elif number == 3:
-                    generatePiece3()
-                elif number == 4:
-                    generatePiece4()
-                elif number == 5:
-                    generatePiece5()
-                elif number == 6:
-                    generatePiece6()
-                elif number == 7:
-                    generatePiece7()
+        if not game_over:
+            dir_actual_cooldown = dir_actual_cooldown - 1
+            if direction == "down":
+                actual_cooldown = -1
+            if dir_actual_cooldown < 0:
+                dir_actual_cooldown = dir_cooldown
+                if state == "generate":
+                    number = random.randint(1,7)
+                    #number = 1
+                    #number = 4
+                    if number == 1:
+                        generatePiece1()
+                    elif number == 2:
+                        generatePiece2()
+                    elif number == 3:
+                        generatePiece3()
+                    elif number == 4:
+                        generatePiece4()
+                    elif number == 5:
+                        generatePiece5()
+                    elif number == 6:
+                        generatePiece6()
+                    elif number == 7:
+                        generatePiece7()
 
-                getMovingPositions()
-                state = "moving"
+                    getMovingPositions()
+                    state = "moving"
 
-            elif state == "moving":
-                if direction == "left":
-                    if canMoveLeft():
-                        for object in moving_positions:
-                            y = object[0][1]
-                            x = object[0][0]
-                            board[y][x] = []
+                elif state == "moving":
+                    if direction == "left":
+                        if canMoveLeft():
+                            for object in moving_positions:
+                                y = object[0][1]
+                                x = object[0][0]
+                                board[y][x] = []
 
-                        moveLeftMovingPositions()
+                            moveLeftMovingPositions()
 
-                        for object in moving_positions:
-                            y = object[0][1]
-                            x = object[0][0]
-                            board[y][x] = object[1]
-                elif direction == "right":
-                    if canMoveRight():
-                        for object in moving_positions:
-                            y = object[0][1]
-                            x = object[0][0]
-                            board[y][x] = []
+                            for object in moving_positions:
+                                y = object[0][1]
+                                x = object[0][0]
+                                board[y][x] = object[1]
+                    elif direction == "right":
+                        if canMoveRight():
+                            for object in moving_positions:
+                                y = object[0][1]
+                                x = object[0][0]
+                                board[y][x] = []
 
-                        moveRightMovingPositions()
+                            moveRightMovingPositions()
 
-                        for object in moving_positions:
-                            y = object[0][1]
-                            x = object[0][0]
-                            board[y][x] = object[1]
-                if rotate:
-                    rotate = False
-                    if canRotate():
-                        for object in moving_positions:
-                            y = object[0][1]
-                            x = object[0][0]
-                            board[y][x] = []
-                        rotateMovingPositions()
-                        for object in moving_positions:
-                            y = object[0][1]
-                            x = object[0][0]
-                            board[y][x] = object[1]
+                            for object in moving_positions:
+                                y = object[0][1]
+                                x = object[0][0]
+                                board[y][x] = object[1]
+                    if rotate:
+                        rotate = False
+                        if canRotate():
+                            for object in moving_positions:
+                                y = object[0][1]
+                                x = object[0][0]
+                                board[y][x] = []
+                            rotateMovingPositions()
+                            for object in moving_positions:
+                                y = object[0][1]
+                                x = object[0][0]
+                                board[y][x] = object[1]
 
-        actual_cooldown = actual_cooldown - 1
-        if actual_cooldown < 0:
-            actual_cooldown = cooldown
-            if canMoveDown():
-                for object in moving_positions:
-                    y = object[0][1]
-                    x = object[0][0]
-                    board[y][x] = []
+            actual_cooldown = actual_cooldown - 1
+            if actual_cooldown < 0:
+                actual_cooldown = cooldown
+                if canMoveDown():
+                    for object in moving_positions:
+                        y = object[0][1]
+                        x = object[0][0]
+                        board[y][x] = []
 
-                moveDownMovingPositions()
+                    moveDownMovingPositions()
 
-                for object in moving_positions:
-                    y = object[0][1]
-                    x = object[0][0]
-                    board[y][x] = object[1]
-            else:
-                for object in moving_positions:
-                    y = object[0][1]
-                    x = object[0][0]
-                    board[y][x][0] = False
-                direction = "None"
-                state = "generate"
-                removed_completed_lines = removeCompleteLines()
-                while removed_completed_lines:
+                    for object in moving_positions:
+                        y = object[0][1]
+                        x = object[0][0]
+                        board[y][x] = object[1]
+                else:
+                    for object in moving_positions:
+                        y = object[0][1]
+                        x = object[0][0]
+                        board[y][x][0] = False
+                    direction = "None"
+                    state = "generate"
+                    if checkLoose():
+                        game_over = True
                     removed_completed_lines = removeCompleteLines()
-                    increaseDiff()
+                    while removed_completed_lines:
+                        removed_completed_lines = removeCompleteLines()
+                        increaseDiff()
 
         #lastInput = str(input("\n"))
         #getDirection()
@@ -498,10 +520,14 @@ if __name__ == "__main__":
                 direction = "None"
 
 
-
         window.fill((0, 0, 0))
         paintFigures()
         paintVoidBoard()
+        if game_over:
+            paintGameOver()
+            if rotate:
+                game_over = False
+                createBoard()
         pygame.display.flip()
         fps.tick(60)
 
