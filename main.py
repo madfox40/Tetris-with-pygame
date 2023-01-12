@@ -229,15 +229,12 @@ def moveSectionToDownDown(section_to_down):
 
 def moveSectionToDown(line_deleted):
     section_to_down = getSectionToDown(line_deleted)
-    print(section_to_down)
     for object in section_to_down:
         x = object[0][0]
         y = object[0][1]
         board[y][x] = []
 
     section_to_down = moveSectionToDownDown(section_to_down)
-    print()
-    print(section_to_down)
 
     for object in section_to_down:
         x = object[0][0]
@@ -295,56 +292,63 @@ def paintVoidBoard():
 
 
 def paintFigures():
+    global shadowPos
     for y in range(len(board)):
         for x in range(len(board[y])):
             if len(board[y][x]) > 1:
                 pygame.draw.rect(window, board[y][x][4], pygame.Rect(cell_width * (x), cell_height * (y-3), cell_width, cell_height))
+
+    updateShadowPos()
+    for shadowObj in shadowPos:
+        x = shadowObj[0][0]
+        y = shadowObj[0][1]
+        pygame.draw.rect(window, (255, 255, 255),pygame.Rect(cell_width * (x), cell_height * (y - 3), cell_width, cell_height))
+    shadowPos = []
     #removeShadows()
 
 def increaseDiff():
     global cooldown
     if cooldown > 2:
         cooldown = cooldown - 1
-"""
-def getShadowPos():
-    # moving_positions = [(x,y), [true, pieceType, rotateState, rotateMovements]
-    founded = False
-    posibleDownMovements = []
-    worst_moves_down = 0
-    last_index = len(moving_positions) - 1
-    while not founded:
-        for object in enumerate(moving_positions):
-            object_best = False
-            better_obj_pos = 0
-            x = object[0][0]
-            y = object[0][1]
-            while not object_best:
-                if board[y][x]:
-
 
 def getPosibleDownMovements(object):
+    # object = [(x,y), [true, pieceType, rotateState, rotateMovements]
     movements = 0
     x = object[0][0]
     y = object[0][1]
     founded  = False
+    if y + 1 < height_cells:
+        y = y + 1
+    else:
+        founded = True
     while not founded:
-        if y + 1 >= len(board-1) and board[]:
-            y_to_check = y + 1
+        if ((len(board[y][x])>1 and board[y][x][0] != False) or (len(board[y][x])<1)):
+            movements = movements +1
+            if y + 1 < height_cells:
+                y = y + 1
+            else:
+                founded = True
         else:
-            movements = 0
+            founded = True
     return movements
 
+def updateShadowPos():
+    global shadowPos
+    posibleDownMovements = []
+    for idx,object in enumerate(moving_positions):
+        posibleDownMovements.append(getPosibleDownMovements(object))
 
-def addShadow(object):
-    #object = [(x,y), [true, pieceType, rotateState, rotateMovements]
-    x = object[0][0]
-    y = object[0][1]
-    if object[1][0] == True:
+    if len(posibleDownMovements) > 0:
+        max_y = min(posibleDownMovements)
+        shadowPos = []
+        for idx,object in enumerate(moving_positions):
+            object_body = object[1]
+            x = object[0][0]
+            y = object[0][1]
+            shadowPos.append([(x,y+max_y), object_body])
 
 
-def removeShadows():
-    print()
-"""
+
 
 if __name__ == "__main__":
     height_cells = 23
@@ -362,6 +366,7 @@ if __name__ == "__main__":
     dir_cooldown= 3
     actual_cooldown = cooldown
     dir_actual_cooldown = dir_cooldown
+    shadowPos = []
 
     cell_width = screen_width / width_cells
     cell_height = screen_height / (height_cells-3)
@@ -470,7 +475,6 @@ if __name__ == "__main__":
         #lastInput = str(input("\n"))
         #getDirection()
         #printBoard()
-
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
