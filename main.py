@@ -414,6 +414,23 @@ def printStartScreen():
     start_screen_rect.topleft = window.get_rect().topleft
     window.blit(start_screen_image, start_screen_rect)
 
+def printStats():
+    font = pygame.font.Font(None, 50)
+
+    # Renderizar el texto "Hola mundo" en la ventana
+    if len(f"{puntuacion}") == 1:
+        render_points = f"000{puntuacion}"
+    elif len(f"{puntuacion}") == 2:
+        render_points = f"00{puntuacion}"
+    elif len(f"{puntuacion}") == 3:
+        render_points = f"0{puntuacion}"
+    elif len(f"{puntuacion}") == 2:
+        render_points = f"{puntuacion}"
+
+    text = font.render(f"{render_points}", True, (0, 0, 0))
+    # Mostrar el texto en pantalla
+    window.blit(text, (screen_width/100 * 68, screen_height/100 * 70))
+
 if __name__ == "__main__":
     screen_width = 600
     screen_height = 600
@@ -439,7 +456,7 @@ if __name__ == "__main__":
     increase_diff_counter = increase_diff_value
     shadowPos = []
     start_screen = True
-
+    next_number = random.randint(1,7)
 
     puntuacion = 0
 
@@ -493,7 +510,8 @@ if __name__ == "__main__":
             if dir_actual_cooldown < 0:
                 dir_actual_cooldown = dir_cooldown
                 if state == "generate":
-                    number = random.randint(1,7)
+                    number = next_number
+                    next_number = random.randint(1,7)
                     #number = 1
                     #number = 4
                     if number == 1:
@@ -622,7 +640,9 @@ if __name__ == "__main__":
             if rotate:
                 game_over = False
                 createBoard()
+                puntuacion = 0
         paintControlBoard()
+        printStats()
         if start_screen:
             printStartScreen()
             if rotate:
