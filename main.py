@@ -409,6 +409,11 @@ def paintBackgrounds():
     stats_background_rect.center = (board_width*1.5, board_height/2)
     window.blit(stats_background_image, stats_background_rect)
 
+def printStartScreen():
+    start_screen_rect = start_screen_image.get_rect()
+    start_screen_rect.topleft = window.get_rect().topleft
+    window.blit(start_screen_image, start_screen_rect)
+
 if __name__ == "__main__":
     screen_width = 600
     screen_height = 600
@@ -433,6 +438,10 @@ if __name__ == "__main__":
     increase_diff_value = 4
     increase_diff_counter = increase_diff_value
     shadowPos = []
+    start_screen = True
+
+
+    puntuacion = 0
 
     game_over = False
     game_over_image = pygame.image.load("./images/gameOver.png")
@@ -446,6 +455,9 @@ if __name__ == "__main__":
 
     stats_background = pygame.image.load("./images/statsBackground.png")
     stats_background_image = pygame.transform.scale(stats_background, (board_width, board_height))
+
+    start_screen = pygame.image.load("./images/StartScreen.png")
+    start_screen_image = pygame.transform.scale(start_screen, (screen_width, screen_height))
 
     cell_width = board_width / width_cells
     cell_height = board_height / (height_cells-3)
@@ -474,7 +486,7 @@ if __name__ == "__main__":
 
 
     while True:
-        if not game_over:
+        if not game_over and not start_screen:
             dir_actual_cooldown = dir_actual_cooldown - 1
             if direction == "down":
                 actual_cooldown = -1
@@ -566,10 +578,14 @@ if __name__ == "__main__":
                     state = "generate"
                     if checkLoose():
                         game_over = True
+
+                    completed_lines = 0
                     removed_completed_lines = removeCompleteLines()
                     while removed_completed_lines:
+                        completed_lines +=1
                         removed_completed_lines = removeCompleteLines()
                         increaseDiff()
+                    puntuacion = puntuacion + completed_lines*completed_lines
 
         #lastInput = str(input("\n"))
         #getDirection()
@@ -607,6 +623,10 @@ if __name__ == "__main__":
                 game_over = False
                 createBoard()
         paintControlBoard()
+        if start_screen:
+            printStartScreen()
+            if rotate:
+                start_screen = False
         pygame.display.flip()
         fps.tick(60)
 
