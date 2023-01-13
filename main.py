@@ -431,6 +431,23 @@ def printStats():
     # Mostrar el texto en pantalla
     window.blit(text, (screen_width/100 * 68, screen_height/100 * 70))
 
+    figure_rect = pygame.Rect(screen_width/100 * 67, screen_height/100 *40, cell_width*5,
+                              cell_height*5)
+    if next_number == 1:
+        window.blit(piece_1_image, figure_rect)
+    elif next_number == 2:
+        window.blit(piece_2_image, figure_rect)
+    elif next_number == 3:
+        window.blit(piece_3_image, figure_rect)
+    elif next_number == 4:
+        window.blit(piece_4_image, figure_rect)
+    elif next_number == 5:
+        window.blit(piece_5_image, figure_rect)
+    elif next_number == 6:
+        window.blit(piece_6_image, figure_rect)
+    elif next_number == 7:
+        window.blit(piece_7_image, figure_rect)
+
 if __name__ == "__main__":
     screen_width = 600
     screen_height = 600
@@ -495,6 +512,20 @@ if __name__ == "__main__":
     figure6_image = pygame.transform.scale(figure6, (cell_width,cell_height))
     figure7_image = pygame.transform.scale(figure7, (cell_width, cell_height))
     shadow_image = pygame.transform.scale(shadow, (cell_width,cell_height))
+    piece1 = pygame.image.load("./images/cuadraditos/Pieza1.png")
+    piece2 = pygame.image.load("./images/cuadraditos/Pieza2.png")
+    piece3 = pygame.image.load("./images/cuadraditos/Pieza3.png")
+    piece4 = pygame.image.load("./images/cuadraditos/Pieza4.png")
+    piece5 = pygame.image.load("./images/cuadraditos/Pieza5.png")
+    piece6 = pygame.image.load("./images/cuadraditos/Pieza6.png")
+    piece7 = pygame.image.load("./images/cuadraditos/Pieza7.png")
+    piece_1_image = pygame.transform.scale(piece1, (cell_width*5,cell_height*5))
+    piece_2_image = pygame.transform.scale(piece2, (cell_width*5,cell_height*5))
+    piece_3_image = pygame.transform.scale(piece3, (cell_width*5,cell_height*5))
+    piece_4_image = pygame.transform.scale(piece4, (cell_width*5,cell_height*5))
+    piece_5_image = pygame.transform.scale(piece5, (cell_width*5,cell_height*5))
+    piece_6_image = pygame.transform.scale(piece6, (cell_width*5,cell_height*5))
+    piece_7_image = pygame.transform.scale(piece7, (cell_width*5, cell_height*5))
 
 
     window = pygame.display.set_mode((screen_width, screen_height))
