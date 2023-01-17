@@ -2,9 +2,17 @@ import random
 import pygame
 import sys
 
-fps = pygame.time.Clock()
+"""
+This is a tetris game logic
+"""
+
+
 
 def createBoard():
+    """
+    This funcition modifies the global "board" to create a new board
+    with size (height_cells,width_cells)
+    """
     global board
     board = []
     for row in range(height_cells):
@@ -14,6 +22,9 @@ def createBoard():
         board.append(new_row)
 
 def printBoard():
+    """
+    This function paints the matrix of the current game state board on screen
+    """
     for y in range(len(board)):
         print()
         print("|", end="")
@@ -28,19 +39,12 @@ def printBoard():
     for x in range(len(board[0])):
         print("-", end="")
 
-def gameState():
-    if isEmptyState():
-        return "emptyState"
-
-def isEmptyState():
-    for row in board:
-        for element in row:
-            if element != "":
-                return False
-    return True
-
 def generatePiece1():
     """
+    This function generates the piece 1 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
     ####
     """
     board[0][3] = [True,1,0,[(2,2),(1,-2),(-2,-1),(-1,1)], (0,240,240)]
@@ -50,26 +54,38 @@ def generatePiece1():
 
 def generatePiece2():
     """
+    This function generates the piece 2 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
     #
     ###
     """
-    board[0][3] = [True,2,0,[(2,1),(0,-2),(-2,0),(0,1)], (0,0,240)]
-    board[1][3] = [True,2,0,[(1,2),(0,-1),(0,0),(-1,-1)], (0,0,240)]
-    board[1][4] = [True,2,0,[(0,1),(1,0),(-1,-1),(0,0)], (0,0,240)]
-    board[1][5] = [True,2,0,[(-1,0),(-1,1),(1,1),(1,-2)], (0,0,240)]
+    board[0][3] = [True,2,0,[(1,1),(1,-2),(-2,0),(0,1)], (0,0,240)]
+    board[1][3] = [True,2,0,[(0,2),(1,-1),(0,0),(-1,-1)], (0,0,240)]
+    board[1][4] = [True,2,0,[(-1,1),(2,0),(-1,-1),(0,0)], (0,0,240)]
+    board[1][5] = [True,2,0,[(-2,0),(0,1),(1,1),(1,-2)], (0,0,240)]
 
 def generatePiece3():
     """
+    This function generates the piece 3 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
       #
     ###
     """
-    board[0][5] = [True,3,0,[(0,-1),(-2,0),(0,2),(2,-1)], (240,160,0)]
-    board[1][5] = [True,3,0,[(-1,0),(-1,1),(1,1),(1,-2)], (240,160,0)]
-    board[1][4] = [True,3,0,[(0,1),(0,0),(0,0),(0,-1)], (240,160,0)]
-    board[1][3] = [True,3,0,[(1,2),(1,-1),(-1,-1),(-1,0)], (240,160,0)]
+    board[0][5] = [True,3,0,[(-1,-1),(-1,0),(0,2),(2,-1)], (240,160,0)]
+    board[1][5] = [True,3,0,[(-2,0),(0,1),(1,1),(1,-2)], (240,160,0)]
+    board[1][4] = [True,3,0,[(-1,1),(1,0),(0,0),(0,-1)], (240,160,0)]
+    board[1][3] = [True,3,0,[(0,2),(2,-1),(-1,-1),(-1,0)], (240,160,0)]
 
 def generatePiece4():
     """
+    This function generates the piece 4 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
     ##
     ##
     """
@@ -80,6 +96,10 @@ def generatePiece4():
 
 def generatePiece5():
     """
+    This function generates the piece 5 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
      ##
     ##
     """
@@ -90,6 +110,10 @@ def generatePiece5():
 
 def generatePiece6():
     """
+    This function generates the piece 6 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
      #
     ###
     """
@@ -100,6 +124,10 @@ def generatePiece6():
 
 def generatePiece7():
     """
+    This function generates the piece 7 in board.
+    Each part of the piece is generated in one cell of the board.
+    [if peace is moving or not, type of piece,[rotation points], color of the piece]
+
     ##
      ##
     """
@@ -110,7 +138,10 @@ def generatePiece7():
 
 def getMovingPositions():
     """
-    moving_positions = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    This function save in the global variable moving_positions information with the
+    cells that are currently moving.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
     """
     global moving_positions
     moving_positions = []
@@ -121,6 +152,12 @@ def getMovingPositions():
                     moving_positions.append([(x,y),board[y][x]])
 
 def moveDownMovingPositions():
+    """
+    This function edit the global variable moving_positions to move 1 time in
+    y axis each cell.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         x = object[0][0]
         y = object[0][1]
@@ -128,6 +165,14 @@ def moveDownMovingPositions():
         object[0] = (x,y+1)
 
 def canMoveDown():
+    """
+    This function checks if all moving cells can move 1 position down in y axis.
+    If only one piece can not be moved down returns False.
+    If all pieces can be moved down returns True.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
+
     for object in moving_positions:
         y = object[0][1]
         x = object[0][0]
@@ -138,11 +183,14 @@ def canMoveDown():
                 return False
     return True
 
-def MoveDown():
-    global state
-
-
 def canMoveLeft():
+    """
+    This function checks if all moving cells can move 1 position left in x axis.
+    If only one piece can not be moved left returns False.
+    If all pieces can be moved left returns True.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         y = object[0][1]
         x = object[0][0]
@@ -154,6 +202,12 @@ def canMoveLeft():
     return True
 
 def moveLeftMovingPositions():
+    """
+    This function edit the global variable moving_positions to move 1 time left in
+    x axis each cell.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         x = object[0][0]
         y = object[0][1]
@@ -161,6 +215,13 @@ def moveLeftMovingPositions():
         object[0] = (x-1,y)
 
 def canMoveRight():
+    """
+    This function checks if all moving cells can move 1 position right in x axis.
+    If only one piece can not be moved right returns False.
+    If all pieces can be moved right returns True.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         y = object[0][1]
         x = object[0][0]
@@ -172,6 +233,12 @@ def canMoveRight():
     return True
 
 def moveRightMovingPositions():
+    """
+    This function edit the global variable moving_positions to move 1 time right in
+    x axis each cell.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         x = object[0][0]
         y = object[0][1]
@@ -180,7 +247,13 @@ def moveRightMovingPositions():
 
 
 def canRotate():
-    # moving_positions = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
+    This function checks if all moving cells can be rotated.
+    If only one piece can not be rotated returns False.
+    If all pieces can be rotated returns True.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         rotation_state = object[1][2]
         rotation_movement_x = object[1][3][rotation_state][0]
@@ -196,7 +269,11 @@ def canRotate():
     return True
 
 def rotateMovingPositions():
-    # moving_positions = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
+    This function edit the global variable moving_positions to rotate each cell.
+
+    moving_positions[x] = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     for object in moving_positions:
         rotation_state = object[1][2]
         rotation_movement_x = object[1][3][rotation_state][0]
@@ -210,7 +287,10 @@ def rotateMovingPositions():
         object[0] = (x,y)
 
 def getSectionToDown(line_deleted):
-    # moving_positions = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
+    When a line is deleted it returns a list with the cells of the board that needs
+    to move down.
+    """
     section_to_down = []
     for y in range(len(board)):
         if y == line_deleted:
@@ -220,6 +300,9 @@ def getSectionToDown(line_deleted):
     return section_to_down
 
 def moveSectionToDownDown(section_to_down):
+    """
+    It moves in the list section_to_down each cell one position.
+    """
     for object in section_to_down:
         x = object[0][0]
         y = object[0][1]
@@ -228,6 +311,9 @@ def moveSectionToDownDown(section_to_down):
     return section_to_down
 
 def moveSectionToDown(line_deleted):
+    """
+    When a line is removed it moves each cell above one position down in the board
+    """
     section_to_down = getSectionToDown(line_deleted)
     for object in section_to_down:
         x = object[0][0]
@@ -243,6 +329,11 @@ def moveSectionToDown(line_deleted):
         #board[y][x] = []
 
 def removeCompleteLines():
+    """
+    It checks if there are any complete lines in the board. If there is someone it removes only the first one
+    starting from the top and return True.
+    If there is not any complete line it returs False.
+    """
     removed = False
     line_to_remove = None
 
@@ -263,22 +354,10 @@ def removeCompleteLines():
         return True
     return False
 
-
-
-def getDirection():
-    return "None"
-    global direction
-    if str(lastInput) == "a":
-        direction = "left"
-    elif str(lastInput) == "d":
-        direction = "right"
-    elif str(lastInput) == " ":
-        direction = "rotate"
-    else:
-        direction = "None"
-
-
 def paintVoidBoard():
+    """
+    It paints on screen the Lines of the tetris board
+    """
     num_vert_lines = width_cells
     num_hor_lines = (height_cells - 3) - 1
 
@@ -292,9 +371,14 @@ def paintVoidBoard():
 
 
 def paintFigures():
+    """
+    It paints on screen the different figures placed on the board
+    """
     global shadowPos
 
     updateShadowPos()
+
+    #Uncoment this if you want only the colors not the image painted
     """
     for shadowObj in shadowPos:
         x = shadowObj[0][0]
@@ -307,6 +391,8 @@ def paintFigures():
         shadow_rect = pygame.Rect(board_pos[0] + (cell_width * (x)), board_pos[1] +( cell_height * (y - 3)), cell_width, cell_height)
         window.blit(shadow_image, shadow_rect)
     shadowPos = []
+
+    # Uncoment this if you want only the colors not the image painted
     """
     for y in range(len(board)):
         for x in range(len(board[y])):
@@ -336,6 +422,12 @@ def paintFigures():
 
 
 def increaseDiff():
+    """
+    This function is in charge changing the difficulty changing the global cooldown.
+    Each time is executed increase_diff_value decrements in 1. When increase_diff_value is 0
+    the cooldown is decremented and increase_diff_value is reset to default value.
+    The minimum cooldown is 2.
+    """
     global cooldown
     global increase_diff_value
     if increase_diff_value <= 0:
@@ -346,7 +438,12 @@ def increaseDiff():
         increase_diff_value = increase_diff_value-1
 
 def getPosibleDownMovements(object):
-    # object = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
+    This function returns the maximum down movements that an object can move down
+    in the board without colliding with other object or leaving the board.
+
+    object = [(x,y), [true, pieceType, rotateState, rotateMovements]
+    """
     movements = 0
     x = object[0][0]
     y = object[0][1]
@@ -367,6 +464,9 @@ def getPosibleDownMovements(object):
     return movements
 
 def updateShadowPos():
+    """
+    This function move the cells variable shadowPos to the place they should be.
+    """
     global shadowPos
     posibleDownMovements = []
     for idx,object in enumerate(moving_positions):
@@ -382,6 +482,9 @@ def updateShadowPos():
             shadowPos.append([(x,y+max_y), object_body])
 
 def checkLoose():
+    """
+    If the player loose this variable returns True if not returns False.
+    """
     for y in range(len(board)):
         for x in range(len(board[y])):
             if y > 2:
@@ -391,30 +494,54 @@ def checkLoose():
     return False
 
 def paintGameOver():
+    """
+    This function paints the gameOver screen
+    """
     game_over_rect = game_over_image.get_rect()
     game_over_rect.center = board_center
     window.blit(game_over_image, game_over_rect)
 
 def paintControlBoard():
+    """
+    This function paints the control board (stats board)
+    """
     control_bar_rect = control_bar_image.get_rect()
     control_bar_rect.center = (board_width*1.5, board_height/2)
     window.blit(control_bar_image, control_bar_rect)
 
 def paintBackgrounds():
-    tetris_background_rect = tetris_background_image.get_rect()
-    tetris_background_rect.center = (board_width/2, board_height/2)
-    window.blit(tetris_background_image, tetris_background_rect)
+    """
+    This function paints game backgrounds and stats background
+    """
+    if new_record_obtained:
+        tetris_background_rect_2 = tetris_background_image_2.get_rect()
+        tetris_background_rect_2.center = (board_width / 2, board_height / 2)
+        window.blit(tetris_background_image_2, tetris_background_rect_2)
 
-    stats_background_rect = stats_background_image.get_rect()
-    stats_background_rect.center = (board_width*1.5, board_height/2)
-    window.blit(stats_background_image, stats_background_rect)
+        stats_background_rect_2 = stats_background_image_2.get_rect()
+        stats_background_rect_2.center = (board_width * 1.5, board_height / 2)
+        window.blit(stats_background_image_2, stats_background_rect_2)
+    else:
+        tetris_background_rect = tetris_background_image.get_rect()
+        tetris_background_rect.center = (board_width/2, board_height/2)
+        window.blit(tetris_background_image, tetris_background_rect)
+
+        stats_background_rect = stats_background_image.get_rect()
+        stats_background_rect.center = (board_width*1.5, board_height/2)
+        window.blit(stats_background_image, stats_background_rect)
 
 def printStartScreen():
+    """
+    This function paints the start screen
+    """
     start_screen_rect = start_screen_image.get_rect()
     start_screen_rect.topleft = window.get_rect().topleft
     window.blit(start_screen_image, start_screen_rect)
 
 def printStats():
+    """
+    This function paints the game stats numbers and the next figure
+    """
     font = pygame.font.Font(None, 50)
 
     # Renderizar el texto "Hola mundo" en la ventana
@@ -424,12 +551,26 @@ def printStats():
         render_points = f"00{puntuacion}"
     elif len(f"{puntuacion}") == 3:
         render_points = f"0{puntuacion}"
-    elif len(f"{puntuacion}") == 2:
+    else:
         render_points = f"{puntuacion}"
 
     text = font.render(f"{render_points}", True, (0, 0, 0))
     # Mostrar el texto en pantalla
     window.blit(text, (screen_width/100 * 68, screen_height/100 * 70))
+
+
+    if len(f"{hight_score}") == 1:
+        render_points = f"000{hight_score}"
+    elif len(f"{hight_score}") == 2:
+        render_points = f"00{hight_score}"
+    elif len(f"{hight_score}") == 3:
+        render_points = f"0{hight_score}"
+    else:
+        render_points = f"{hight_score}"
+
+    text = font.render(f"{render_points}", True, (0, 0, 0))
+    # Mostrar el texto en pantalla
+    window.blit(text, (screen_width/100 * 68, screen_height/100 * 88))
 
     figure_rect = pygame.Rect(screen_width/100 * 67, screen_height/100 *40, cell_width*5,
                               cell_height*5)
@@ -449,8 +590,16 @@ def printStats():
         window.blit(piece_7_image, figure_rect)
 
 if __name__ == "__main__":
+    fps = pygame.time.Clock()
+
     screen_width = 600
     screen_height = 600
+
+    hight_score_doc = open("./hightScore.txt", "r")
+    hight_score = hight_score_doc.readline()
+    if hight_score == "":
+        hight_score = 0
+
 
     height_cells = 23
     width_cells = 10
@@ -469,6 +618,7 @@ if __name__ == "__main__":
     dir_cooldown= 3
     actual_cooldown = cooldown
     dir_actual_cooldown = dir_cooldown
+    initial_cooldown = cooldown
     increase_diff_value = 4
     increase_diff_counter = increase_diff_value
     shadowPos = []
@@ -487,8 +637,14 @@ if __name__ == "__main__":
     tetris_background = pygame.image.load("./images/tetrisBackground.png")
     tetris_background_image = pygame.transform.scale(tetris_background, (board_width, board_height))
 
+    tetris_background_2 = pygame.image.load("./images/victoryWallpaper.jpg")
+    tetris_background_image_2 = pygame.transform.scale(tetris_background_2, (board_width, board_height))
+
     stats_background = pygame.image.load("./images/statsBackground.png")
     stats_background_image = pygame.transform.scale(stats_background, (board_width, board_height))
+
+    stats_background_2 = pygame.image.load("./images/statsWallpaper.jpg")
+    stats_background_image_2 = pygame.transform.scale(stats_background_2, (board_width, board_height))
 
     start_screen = pygame.image.load("./images/StartScreen.png")
     start_screen_image = pygame.transform.scale(start_screen, (screen_width, screen_height))
@@ -527,6 +683,15 @@ if __name__ == "__main__":
     piece_6_image = pygame.transform.scale(piece6, (cell_width*5,cell_height*5))
     piece_7_image = pygame.transform.scale(piece7, (cell_width*5, cell_height*5))
 
+    music = pygame.mixer.music.load("./Sound/Original Tetris theme (Tetris Soundtrack).mp3")
+    pygame.mixer.music.play(-1)
+    rotate_sound = pygame.mixer.Sound("./Sound/rotate.wav")
+    touch_floor = pygame.mixer.Sound("./Sound/touchFloor.wav")
+    clear_line = pygame.mixer.Sound("./Sound/clear.wav")
+    loose = pygame.mixer.Sound("./Sound/loose.wav")
+    move = pygame.mixer.Sound("./Sound/move.wav")
+    new_record_sound = pygame.mixer.Sound("./Sound/NewRecord.wav")
+    new_record_obtained = False
 
     window = pygame.display.set_mode((screen_width, screen_height))
     screen_rect = window.get_rect()
@@ -565,6 +730,7 @@ if __name__ == "__main__":
 
                 elif state == "moving":
                     if direction == "left":
+                        pygame.mixer.Sound.play(move)
                         if canMoveLeft():
                             for object in moving_positions:
                                 y = object[0][1]
@@ -578,6 +744,7 @@ if __name__ == "__main__":
                                 x = object[0][0]
                                 board[y][x] = object[1]
                     elif direction == "right":
+                        pygame.mixer.Sound.play(move)
                         if canMoveRight():
                             for object in moving_positions:
                                 y = object[0][1]
@@ -591,6 +758,7 @@ if __name__ == "__main__":
                                 x = object[0][0]
                                 board[y][x] = object[1]
                     if rotate:
+                        pygame.mixer.Sound.play(rotate_sound )
                         rotate = False
                         if canRotate():
                             for object in moving_positions:
@@ -625,19 +793,23 @@ if __name__ == "__main__":
                         board[y][x][0] = False
                     direction = "None"
                     state = "generate"
+                    pygame.mixer.Sound.play(touch_floor)
                     if checkLoose():
                         game_over = True
+                        pygame.mixer.Sound.play(loose)
+                        pygame.mixer.music.stop()
 
                     completed_lines = 0
                     removed_completed_lines = removeCompleteLines()
+                    if removed_completed_lines:
+                        pygame.mixer.Sound.play(clear_line)
                     while removed_completed_lines:
                         completed_lines +=1
                         removed_completed_lines = removeCompleteLines()
                         increaseDiff()
                     puntuacion = puntuacion + completed_lines*completed_lines
 
-        #lastInput = str(input("\n"))
-        #getDirection()
+        #Uncoment this if you want to see the matrix of the board state on the console
         #printBoard()
 
         for event in pygame.event.get():
@@ -666,11 +838,26 @@ if __name__ == "__main__":
         paintBackgrounds()
         paintFigures()
         paintVoidBoard()
+        if puntuacion > int(hight_score):
+            hight_score = puntuacion
+            hight_score_write = open("./hightScore.txt", "w")
+            hight_score_write.write(f"{hight_score}")
+            hight_score_write.close()
+            if new_record_obtained == False:
+                pygame.mixer.music.load("./Sound/FinalSoundVersion.mp3")
+                pygame.mixer.music.play(-1)
+                pygame.mixer.Sound.play(new_record_sound)
+                new_record_obtained = True
         if game_over:
             paintGameOver()
             if rotate:
                 game_over = False
+                new_record_obtained = False
+                music = pygame.mixer.music.load("./Sound/Original Tetris theme (Tetris Soundtrack).mp3")
+                pygame.mixer.music.play(-1)
                 createBoard()
+                cooldown = initial_cooldown
+                increase_diff_counter = increase_diff_value
                 puntuacion = 0
         paintControlBoard()
         printStats()
